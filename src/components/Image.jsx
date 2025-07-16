@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import { IKImage } from "imagekitio-react";
 
 const Image = ({ src, className, w, h, alt }) => {
@@ -12,6 +12,12 @@ const Image = ({ src, className, w, h, alt }) => {
       width={w}
       height={h}
       alt={alt}
+      transformation={[
+        {
+          width: w,
+          height: h,
+        },
+      ]}
     />
   );
 };
