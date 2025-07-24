@@ -1,9 +1,11 @@
-// import User from "../models/user.model.js"
+import User from "../models/user.model.js"
 import { Webhook } from "svix";
 
 export const clerkWebHook = async (req, res) => {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
-  console.log(req.body, req.headers);
+
+  console.log(WEBHOOK_SECRET);
+
   if (!WEBHOOK_SECRET) {
     throw new Error("Webhook secret needed!");
   }
@@ -16,28 +18,24 @@ export const clerkWebHook = async (req, res) => {
   let evt;
 
   try {
-    console.log(payload);
-    console.log(headers);
-
     evt = wh.verify(payload, headers);
-    console.log(evt);
-    console.log(evt.data);
   } catch (err) {
     res.status(400).json({
       message: "webhook verification failed!",
     });
   }
 
-  console.log(evt.data);
-
   if (evt.type === "user.created") {
+      console.log(evt.type,"evt type");
     const newUser = new User({
       clerkUserId: evt.data.id,
       username: evt.data.id || evt.data.email_addresses[0].email_address,
       email: evt.data.email_addresses[0].email_address,
       img: evt.data.profile_img_url,
     });
+      console.log(newUser,"New user");
     await newUser.save();
+      console.log("Save done");
   }
   return res.status(200).json({
     message: "Webhook received",
