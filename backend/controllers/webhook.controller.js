@@ -4,8 +4,6 @@ import { Webhook } from "svix";
 export const clerkWebHook = async (req, res) => {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
-  console.log(WEBHOOK_SECRET);
-
   if (!WEBHOOK_SECRET) {
     throw new Error("Webhook secret needed!");
   }
@@ -26,16 +24,13 @@ export const clerkWebHook = async (req, res) => {
   }
 
   if (evt.type === "user.created") {
-      console.log(evt.type,"evt type");
     const newUser = new User({
       clerkUserId: evt.data.id,
       username: evt.data.id || evt.data.email_addresses[0].email_address,
       email: evt.data.email_addresses[0].email_address,
       img: evt.data.profile_img_url,
     });
-      console.log(newUser,"New user");
     await newUser.save();
-      console.log("Save done");
   }
   return res.status(200).json({
     message: "Webhook received",

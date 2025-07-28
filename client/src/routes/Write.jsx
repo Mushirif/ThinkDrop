@@ -1,26 +1,76 @@
-import React from "react";
-import { useUser } from "@clerk/clerk-react";
+import React, { useState } from "react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import "react-quill-new/dist/quill.snow.css";
 import ReactQuill from "react-quill-new";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify"
+
 
 const Write = () => {
   const { isLoaded, isSignedIn } = useUser();
+  const [value, setValue] = useState("");
+  const navigate = useNavigate();
+  const { getToken } = useAuth();
 
+  const mutation = useMutation({
+    mutationFn: async (newPost) => {
+      const token = await getToken();
+      return axios.post(`${import.meta.env.VITE_API_URL}/posts`, newPost, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
+    onSuccess: (res) => {
+      toast.success("Post has been created")
+      navigate(`/${res.data.slug}`);
+    },
+  });
   if (!isLoaded) {
     return <div className="">Loading...</div>;
   }
   if (isLoaded && !isSignedIn) {
     return <div>You should login!</div>;
   }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = {
+      title: formData.get("title"),
+      category: formData.get("category"),
+      desc: formData.get("desc"),
+      content: value,
+    };
+    console.log(data);
+
+    mutation.mutate(data);
+  };
+
   return (
     <div className="h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] flex flex-col gap-6">
       <h1 className="text-xl font-light">Create a New Post</h1>
-      <form className="flex flex-col gap-6 flex-1 mb-4">
-        <button className="w-max p-2 shadow-md rounded-xl text-sm text-gray-500 bg-white">Add a cover image</button>
-        <input className="bg-transparent text-4xl font-semibold outline-none" type="text" placeholder="My Awesome Story" />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 flex-1 mb-4">
+        <button className="w-max p-2 shadow-md rounded-xl text-sm text-gray-500 bg-white">
+          Add a cover image
+        </button>
+        <input
+          className="bg-transparent text-4xl font-semibold outline-none"
+          type="text"
+          placeholder="My Awesome Story"
+          name="title"
+        />
         <div className="flex items-center gap-4">
-          <label htmlFor="" className="text-sm">Choose a Category:</label>
-          <select className="bg-white p-2 rounded-xl shadow-md" name="cat" id="">
+          <label htmlFor="" className="text-sm">
+            Choose a Category:
+          </label>
+          <select
+            className="bg-white p-2 rounded-xl shadow-md"
+            name="category"
+            id=""
+          >
             <option value="general">General</option>
             <option value="web-design">Web Design</option>
             <option value="development">Development</option>
@@ -29,9 +79,30 @@ const Write = () => {
             <option value="marketing">Marketing</option>
           </select>
         </div>
-        <textarea className="bg-white p-4 rounded-xl shadow-md " name="desc" placeholder="A Short Description" />
-        <ReactQuill theme="snow" className="flex-1 rounded-xl shadow-md bg-white" />
-        <button className="bg-blue-800 text-white font-medium rounded-xl mt-4 p-2 w-36">Send</button>
+        <textarea
+          className="bg-white p-4 rounded-xl shadow-md"
+          name="desc"
+          placeholder="A Short Description"
+        />
+        <div className="flex">
+        <div className="flex flex-col mr-2 gap-2">
+          <div className="cursor-pointer">🌆</div>
+          <div className="cursor-pointer">▶️</div>
+        </div>
+          <ReactQuill
+            theme="snow"
+            className="flex-1 rounded-xl shadow-md bg-white"
+            value={value}
+            onChange={setValue}
+          />
+        </div>
+        <button
+          disabled={mutation.isPending}
+          className="bg-blue-800 text-white font-medium rounded-xl mt-4 p-2 w-36 cursor-pointer disabled:bg-blue-400 disabled:cursor-not-allowed"
+        >
+          {mutation.isPending ? "Loading..." : "Send"}
+        </button>
+        {mutation.isError && <span>{mutation.error.message}</span>}
       </form>
     </div>
   );

@@ -5,12 +5,33 @@ import postRouter from "./routes/post.route.js";
 import commentRouter from "./routes/user.route.js";
 import webhookRoute from "./routes/webhook.route.js";
 import dotenv from "dotenv";
-
+import { clerkMiddleware, requireAuth } from "@clerk/express";
+import cors from "cors";
 dotenv.config();
 
 const app = express();
+app.use(cors(process.env.CLIENT_URL))
+app.use(clerkMiddleware());
 app.use("/webhooks", webhookRoute);
 app.use(express.json());
+
+// app.get("/auth-state", (req, res) => {
+//   const authState = req.auth();
+//   res.json(authState);
+// });
+
+// app.get("/protect", (req, res) => {
+//   const {userId} = req.auth();
+//   if(!userId){
+//     return res.status(404).json("Not Authenticated")
+//   }
+//   res.status(200).json("content")
+// });
+
+app.get("/protect", requireAuth(), (req, res) => {
+  
+  res.status(200).json("content")
+});
 
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
