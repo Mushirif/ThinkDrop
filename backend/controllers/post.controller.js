@@ -1,10 +1,18 @@
+import ImageKit from "imagekit";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 
 export const getPosts = async (req, res) => {
-  const posts = await Post.find();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 2;
+  const posts = await Post.find()
+    .limit(limit)
+    .skip((page - 1) * 5);
+
+  const totalPosts = await Post.countDocuments();
+  const hasMore = page * limit < totalPosts;
   //   console.log(posts);
-  res.status(200).json(posts);
+  res.status(200).json({posts,hasMore});
 };
 export const getPost = async (req, res) => {
   const post = await Post.findOne({ slug: req.params.slug });
@@ -62,4 +70,15 @@ export const deletePost = async (req, res) => {
   }
   //   console.log(post);
   res.status(200).json("post has been deleted");
+};
+
+const imageKit = new ImageKit({
+  urlEndpoint: "https://ik.imagekit.io/86jh2jtb1",
+  publicKey: "public_cXuhaQ2QQZfFCJ1j3WZuh7SFZN0=",
+  privateKey: "private_5aOf/Q3FsxnTtabAYXv+JmU9COU=",
+});
+
+export const uploadAuth = async (req, res) => {
+  const result = imageKit.getAuthenticationParameters();
+  res.send(result);
 };
