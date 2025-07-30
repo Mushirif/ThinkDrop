@@ -1,8 +1,8 @@
 import express from "express";
 import connectDB from "./lib/connectDB.js";
-import userRouter from "./routes/comment.route.js";
+import userRouter from "./routes/user.route.js";
 import postRouter from "./routes/post.route.js";
-import commentRouter from "./routes/user.route.js";
+import commentRouter from "./routes/comment.route.js";
 import webhookRoute from "./routes/webhook.route.js";
 import dotenv from "dotenv";
 import { clerkMiddleware, requireAuth } from "@clerk/express";

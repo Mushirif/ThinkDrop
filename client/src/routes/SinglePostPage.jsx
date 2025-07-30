@@ -11,6 +11,7 @@ import { format } from "timeago.js";
 
 const fetchPost = async (slug) => {
   const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
+  
   return res.data;
 };
 const SinglePostPage = () => {
@@ -158,7 +159,7 @@ const SinglePostPage = () => {
               </Link>
             </div>
           </div>
-          <PostMenuActions />
+          <PostMenuActions post={data} />
           <h1 className="mt-4 mb-4 text-sm font-bold">Categories</h1>
           <div className="flex flex-col gap-2 text-sm">
             <Link className="underline">All</Link>
@@ -182,7 +183,7 @@ const SinglePostPage = () => {
           <Search/>
         </div>
       </div>
-      <Comments/>
+      <Comments postId={data._id}/>
     </div>
   );
 };
