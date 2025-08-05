@@ -8,14 +8,12 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "timeago.js";
 
-
 const fetchPost = async (slug) => {
   const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
-  
+
   return res.data;
 };
 const SinglePostPage = () => {
-  // need to understand from fury
   const { slug } = useParams();
 
   const { isPending, error, data } = useQuery({
@@ -42,14 +40,14 @@ const SinglePostPage = () => {
             <Link className="text-blue-800">{data.category}</Link>
             <span>{format(data.createdAt)}</span>
           </div>
-          <p className="text-gray-500 font-medium">
-            {data.desc}
-          </p>
+          <p className="text-gray-500 font-medium">{data.desc}</p>
         </div>
         {/* image */}
-        {data.img && <div className="hidden lg:block w-2/5">
-          <Image src={data.img} w="600" className="rounded-2xl" />
-        </div>}
+        {data.img && (
+          <div className="hidden lg:block w-2/5">
+            <Image src={data.img} w="600" className="rounded-2xl" />
+          </div>
+        )}
       </div>
       {/* content */}
       <div className="flex flex-col md:flex-row gap-8">
@@ -139,16 +137,18 @@ const SinglePostPage = () => {
           <div className="flex flex-col gap-4">
             <h1 className="text-sm font-bold">Auther</h1>
             <div className="flex items-center">
-              {data.user.img && <Image
-                src={data.user.img}
-                className="w-12 h-12 object-cover rounded-full"
-                w="48"
-                h="48"
-              />}
+              {data.user.img && (
+                <Image
+                  src={data.user.img}
+                  className="w-12 h-12 object-cover rounded-full"
+                  w="48"
+                  h="48"
+                />
+              )}
               <Link className="ms-4 text-blue-800">{data.user.username}</Link>
             </div>
             <p className="text-sm text-gray-500">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
             </p>
             <div className="flex gap-2">
               <Link>
@@ -180,10 +180,10 @@ const SinglePostPage = () => {
             </Link>
           </div>
           <h1 className="mt-4 mb-4 text-sm font-bold">Search</h1>
-          <Search/>
+          <Search />
         </div>
       </div>
-      <Comments postId={data._id}/>
+      <Comments postId={data._id} />
     </div>
   );
 };

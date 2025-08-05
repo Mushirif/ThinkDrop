@@ -5,11 +5,11 @@ const PostListPage = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div>
+    <div className="">
       <h1 className="mb-8 text-2xl">Development Blog</h1>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="md:hidden bg-blue-800 text-sm text-white px-4 py-2 rounded-2xl mb-4"
+        className="bg-blue-800 text-sm text-white px-4 py-2 rounded-2xl mb-4 md:hidden"
       >
         {open ? "Close" : "Filter or Search"}
       </button>
