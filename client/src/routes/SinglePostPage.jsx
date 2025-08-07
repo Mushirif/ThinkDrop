@@ -7,6 +7,7 @@ import Comments from "../components/Comments";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "timeago.js";
+import StarRating from "../components/Rating"
 
 const fetchPost = async (slug) => {
   const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
@@ -49,6 +50,7 @@ const SinglePostPage = () => {
           </div>
         )}
       </div>
+      <StarRating  postId={slug}/>
       {/* content */}
       <div className="flex flex-col md:flex-row gap-8">
         {/* text */}
@@ -131,6 +133,7 @@ const SinglePostPage = () => {
             obcaecati. Consequuntur labore quae ipsum eaque, iure officia cum
             saepe nisi earum?
           </p>
+          
         </div>
         {/* menu */}
         <div className="px-4 h-max sticky top-8">

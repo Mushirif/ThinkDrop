@@ -5,6 +5,7 @@ import { format } from "timeago.js";
 
 
 
+
 const PostListItem = ({ post }) => {
   
   return (
@@ -31,6 +32,7 @@ const PostListItem = ({ post }) => {
         <Link to={`/${post.slug}`} className="underline text-blue-800 text-sm">
           Read more
         </Link>
+        
       </div>
     </div>
   );
